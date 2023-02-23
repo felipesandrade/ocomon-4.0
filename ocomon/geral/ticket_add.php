@@ -165,6 +165,8 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 								?>
 							</select>
 						</div>
+						<!-- Lista de subtipo de problemas  -->
+						<div id="issueSubTipoProblema"></div>
 						<!-- Lista de tipos de problemas do mesmo tipo e categorias -->
 						<div id="issueCategories"></div>
 						<!-- Descrição do tipo de problema selecionado -->
@@ -764,6 +766,8 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 						loadOperators();
 					}
 					if ($("#idProblema").length > 0) {
+						/* Carregando Subtipo de Problema */
+						showSelectedSubTipoProblema();
 						showSelectedIssue();
 						showIssueDescription($("#idProblema").val());
 					}
@@ -776,6 +780,8 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 			if ($("#idProblema").length > 0) {
 
 				$("#idProblema").off().on("change", function() {
+					/* Carregando Subtipo de Problema */
+					showSelectedSubTipoProblema();
 					showSelectedIssue();
 					showIssueDescription($("#idProblema").val());
 				});
@@ -1103,6 +1109,50 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 			}
 		}
 
+		/* Carregando Subtipo de Problema */
+		function showSelectedSubTipoProblema() {
+
+			if ($('#idProblema').length > 0) {
+				var loading = $(".loading");
+				$(document).ajaxStart(function() {
+					loading.show();
+				});
+				$(document).ajaxStop(function() {
+					loading.hide();
+				});
+
+				$.ajax({
+					url: './get_issue_sub_problem.php',
+					method: 'POST',
+					dataType: 'json',
+					data: {
+						area: $('#idArea').val() ?? '',
+						issue_selected: $('#idProblema').val() ?? '',
+					},
+				}).done(function(response) {
+
+					if (response.length > 0) {
+						$('#issueSubTipoProblema').addClass("form-group row col-md-12");
+						$('#issueSubTipoProblema').empty();
+							
+						var html = '<label for="idSubtipoProblema" class="col-sm-2 col-md-2 col-form-label col-form-label-sm text-md-right">Subtipo de Problema</label>';
+						html += '<div class="form-group col-md-4">';
+						html += '<select class="form-control " id="idSubtipoProblema" name="subtipoproblema">';
+						html += '<option value="" selected>Subtipo de Problema</option>';					
+						for (var i in response) {
+							html += '<option value="' + response[i].prob_categoria_id + '">' + response[i].prob_categoria_descricao + '</option>';
+						}
+						html += '</select>';
+						html += '</div>';
+						$('#issueSubTipoProblema').append(html);
+					} else {
+						$('#issueSubTipoProblema').removeClass("form-group col-md-12");
+						$('#issueSubTipoProblema').empty();
+					}
+				});
+			}
+		}
+
 		function showSelectedIssue() {
 
 			if ($('#idProblema').length > 0) {
@@ -1127,7 +1177,7 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 					if (response.length > 0) {
 						$('#issueCategories').addClass("form-group col-md-12");
 						$('#issueCategories').empty();
-
+							
 						var html = '<table class="table table-striped table-hover">';
 						html += '<thead bg-secondary">';
 						html += '<tr class="header">';

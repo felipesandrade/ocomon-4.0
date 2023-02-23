@@ -1169,6 +1169,49 @@ function getIssueDetailed(\PDO $conn, int $id, ?int $areaId = null): array
     }
 }
 
+/**
+ * getIssueSubTipoProblema
+ * Retorna um array com as informacoes dos sutipos de problemas - 
+ * keys: prob_id
+ * @param PDO $conn
+ * @param int $id
+ * @param ?int $areaId
+ * @return array
+ */
+function getIssueSubTipoProblema(\PDO $conn, int $id, ?int $areaId = null): array
+{
+    $areaId = (isset($areaId) && $areaId != '-1' && filter_var($areaId, FILTER_VALIDATE_INT) ? $areaId : "");
+   
+    if (empty($id))
+        return [] ;   
+    
+    $sql = "SELECT 
+                  cp.prob_categoria_id
+                 ,cp.prob_categoria_descricao
+            FROM 
+                 problemas_categorias as cp
+            WHERE 
+                 cp.prob_id = :id
+            ORDER BY 
+                cp.prob_categoria_descricao";
+    try {
+        $res = $conn->prepare($sql);       
+        $res->bindParam(':id', $id, PDO::PARAM_STR);
+        $res->execute();
+
+        if ($res->rowCount()) {
+            foreach ($res->fetchAll() as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return [];
+    }
+    catch (Exception $e) {
+        echo $sql . "<hr>" . $e->getMessage();
+        return [];
+    }
+}
 
 /**
  * Retorna as informações do tipo de problema informado
