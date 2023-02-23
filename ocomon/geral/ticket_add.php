@@ -1135,10 +1135,10 @@ if (!isset($_POST['submit']) || empty($_POST)) {
 						$('#issueSubTipoProblema').addClass("form-group row col-md-12");
 						$('#issueSubTipoProblema').empty();
 							
-						var html = '<label for="idSubtipoProblema" class="col-sm-2 col-md-2 col-form-label col-form-label-sm text-md-right">Subtipo de Problema</label>';
-						html += '<div class="form-group col-md-4">';
+						var html = '<label for="idSubtipoProblema" class="col-sm-2 col-md-2 col-form-label col-form-label-sm text-md-right" style="margin-right: 1rem;">Subtipo de Problema</label>';
+						html += '<div class="form-group col-md-4" style="padding-left: 0.2rem;">';
 						html += '<select class="form-control " id="idSubtipoProblema" name="subtipoproblema">';
-						html += '<option value="" selected>Subtipo de Problema</option>';					
+						html += '<option value="" selected>Selecione Subtipo de Problema</option>';					
 						for (var i in response) {
 							html += '<option value="' + response[i].prob_categoria_id + '">' + response[i].prob_categoria_descricao + '</option>';
 						}
