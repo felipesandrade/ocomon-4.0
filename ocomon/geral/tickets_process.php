@@ -56,7 +56,6 @@ $qry_profile_screen .= " AND  c.conf_cod = '" . $_SESSION['s_screen'] . "'";
 $res_screen = $conn->query($qry_profile_screen);
 $screen = $res_screen->fetch(PDO::FETCH_ASSOC);
 
-
 $sqlProfileScreenGlobal = $QRY["useropencall"];
 $resScreenGlobal = $conn->query($sqlProfileScreenGlobal);
 $screenGlobal = $resScreenGlobal->fetch(PDO::FETCH_ASSOC);
@@ -82,6 +81,10 @@ $data['format_bar'] = hasFormatBar($config, '%oco%');
 $data['sistema'] = (isset($post['sistema']) && !empty($post['sistema']) ? noHtml($post['sistema']) : "-1");
 $data['area_destino'] = $screen['conf_opentoarea'];
 $data['problema'] = (isset($post['problema']) && !empty($post['problema']) ? noHtml($post['problema']) : "-1");
+
+/* Subtipo de Problema */
+$data['subtipoproblema'] = (isset($post['subtipoproblema']) && !empty($post['subtipoproblema']) ? noHtml($post['subtipoproblema']) : "-1");
+
 $data['radio_prob'] = (isset($post['radio_prob']) ? noHtml($post['radio_prob']) : $data['problema']);
 
 $data['descricao'] = (isset($post['descricao']) ? $post['descricao'] : "");
@@ -250,6 +253,14 @@ if ($data['action'] == "open") {
     } elseif ($screen['conf_scr_prob'] == '1' && $data['problema'] == "-1" && (!count($required_fields) || $required_fields['conf_scr_prob'])) {
         $data['success'] = false; 
         $data['field_id'] = "idProblema";
+
+    // Subtipo de Problema 
+    } elseif ($screen['conf_scr_subtipoproblema'] == '1' && $data['subtipoproblema'] == "-1" && (!count($required_fields) || $required_fields['conf_scr_subtipoproblema'])) {
+        $data['success'] = false; 
+        $data['field_id'] = "idSubTipoProblema";
+
+
+        
     } elseif ($screen['conf_scr_desc'] == '1' && $data['descricao'] == "" && (!count($required_fields) || $required_fields['conf_scr_desc'])) {
         $data['success'] = false; 
         $data['field_id'] = "idDescricao";
@@ -329,6 +340,13 @@ if ($data['action'] == "edit") {
     } elseif ($data['problema'] == "-1"  && $fieldsEdit->isRequired("issue")) {
         $data['success'] = false; 
         $data['field_id'] = "idProblema";
+
+    /* Subtipo problema  */
+    } elseif ($data['subtipoproblema'] == "-1"  && $fieldsEdit->isRequired("issue")) {
+        $data['success'] = false; 
+        $data['field_id'] = "idSubTipoProblema";  
+    
+        
     } elseif ($data['unidade'] == "-1"  && $fieldsEdit->isRequired("unit")) {
         $data['success'] = false; 
         $data['field_id'] = "idUnidade";
@@ -385,6 +403,13 @@ if ($data['action'] == "close") {
     } elseif ($data['problema'] == "-1"  && $fieldsClose->isRequired("issue")) {
         $data['success'] = false; 
         $data['field_id'] = "idProblema";
+
+    /* Subtipo problema */    
+    }  elseif ($data['subtipoproblema'] == "-1"  && $fieldsClose->isRequired("issue")) {
+        $data['success'] = false; 
+        $data['field_id'] = "idSubTipoProblema";
+
+
     } elseif ($data['unidade'] == "-1"  && $fieldsClose->isRequired("unit")) {
         $data['success'] = false; 
         $data['field_id'] = "idUnidade";
@@ -611,7 +636,7 @@ if ($data['action'] == "open") {
             sistema, contato, contato_email, telefone, local, 
             operador, data_abertura, data_fechamento, status, data_atendimento, 
             aberto_por, oco_scheduled, oco_scheduled_to, 
-            oco_real_open_date, date_first_queued, oco_prior, oco_channel 
+            oco_real_open_date, date_first_queued, oco_prior, oco_channel, subtipo_problema 
         )
 		VALUES 
         (
@@ -619,7 +644,7 @@ if ($data['action'] == "open") {
             '" . $data['sistema'] . "', '" . $data['contato'] . "', '" . $data['contato_email'] . "', '" . $data['telefone'] . "', '" . $data['department'] . "',
             '" . $data['operator'] . "', '{$now}', null, '" . $data['status'] . "', null,
             '" . $data['aberto_por'] . "', '" . $data['is_scheduled'] . "', " . dbField($data['schedule_to'],'date') . ", 
-            '{$now}', null, '" . $data['prioridade'] . "', '" . $data['channel'] . "'
+            '{$now}', null, '" . $data['prioridade'] . "', '" . $data['channel'] . "', '" . $data['subtipoproblema'] . "'
         )";
 		
     try {

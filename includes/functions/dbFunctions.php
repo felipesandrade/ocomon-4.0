@@ -1186,14 +1186,14 @@ function getIssueSubTipoProblema(\PDO $conn, int $id, ?int $areaId = null): arra
         return [] ;   
     
     $sql = "SELECT 
-                  cp.prob_categoria_id
-                 ,cp.prob_categoria_descricao
+                  sp.sub_problema_id
+                 ,sp.sub_problema_descricao
             FROM 
-                 problemas_categorias as cp
+                 subtipo_problema as sp
             WHERE 
-                 cp.prob_id = :id
+                 sp.prob_id = :id
             ORDER BY 
-                cp.prob_categoria_descricao";
+                 sp.sub_problema_descricao";
     try {
         $res = $conn->prepare($sql);       
         $res->bindParam(':id', $id, PDO::PARAM_STR);
